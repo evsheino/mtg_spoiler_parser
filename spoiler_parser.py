@@ -42,12 +42,18 @@ class MtgCard(object):
         self.converted_mana_cost = parse_converted_cost(mana_cost)
         self.color = parse_color(mana_cost)
         self.text = parse_text(elem)
-        try:
-            self.power, self.toughness = parse_power_and_toughness(a)
-        except TypeError:
-            # No power/toughness for this card
-            self.power = u''
-            self.toughness = u''
+
+        self.power = u''
+        self.toughness = u''
+
+        pt = parse_power_and_toughness(elem)
+        if not pt is None:
+            self.power = pt[0]
+            try:
+                self.toughness = pt[1]
+            except IndexError:
+                # Planeswalker
+                pass
 
 def parse_name(elem):
     return parse_elem_text(elem.find("h2"))
@@ -214,18 +220,15 @@ def parse_cards(src, set_name):
     cards = []
     f = open(src)
     soup = BeautifulSoup(f)
-    for table in soup.find_all('table'):
-        try:
-            a = table.find_all('a')[1]
-        except IndexError:
-            continue
-        try:
-            cards.append(MtgCard(a, set_name))
-        except TypeError:
-            continue
+    for elem in soup.find_all('div', 'spoiler-card-text'):
+        cards.append(MtgCard(elem, set_name))
     f.close()
     return cards
 
 if __name__ == '__main__':
+    # Params:
+    # 1: Path to a locally saved copy of the MtGSalvation spoiler
+    # 2: Set name
+    # 3: Output file
     cards = parse_cards(sys.argv[1], sys.argv[2])
     write_card_list(cards, sys.argv[3])
