@@ -14,12 +14,15 @@ def download_file(src, output_name):
     file_type = src.split('.')[-1]
     path = u"{}.{}".format(output_name, file_type)
     if not os.path.isfile(path):
+        print "Downloading image: {}".format(src)
         f = urllib2.urlopen(src)
         file_data = f.read()
         out_file = open(path, 'wb')
         out_file.write(file_data)
         f.close()
         out_file.close()
+    else:
+        print "Output file exists, download skipped."
 
 def download_images(src, out_dir):
     """
@@ -37,10 +40,11 @@ def download_images(src, out_dir):
     soup = BeautifulSoup(f)
 
     for line in soup.find_all('img'):
-        title = line.attrs.get('title')
-        if not title is None:
+        title = line.attrs.get('alt')
+        if title:
             title = title.strip().replace(u'’', u'').replace(u',', u'')
-            if not title in cards:
+            if title and not title in cards:
+                print title
                 cards.append(title)
                 img_src = line.attrs.get('src')
                 output = u"{}{}".format(out_dir, title)
