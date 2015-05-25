@@ -42,7 +42,7 @@ def download_images(src, out_dir):
     for line in soup.find_all('img'):
         title = line.attrs.get('alt')
         if title:
-            title = title.strip().replace(u'’', u'').replace(u',', u'')
+            title = title.strip().replace(u'’', u'').replace(u',', u'').replace(u"Æ", u"Ae")
             if title and not title in cards:
                 print title
                 cards.append(title)

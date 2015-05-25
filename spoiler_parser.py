@@ -14,7 +14,7 @@ HYBRID_MANA = "({}/{})"
 # Spoiler mana formats for regex matching
 NORMAL_MANA_RE = r"([wWuUbBrRgG])"
 SPOILER_PHYREXIAN_MANA_RE = r"\(({})/[pP]\)".format(NORMAL_MANA_RE)
-SPOILER_HYBRID_MANA_RE = r"\(({0})/({0})\)".format(NORMAL_MANA_RE)
+SPOILER_HYBRID_MANA_RE = r"\(({})/({})\)".format(r"(\d+|[wWuUbBrRgG])", NORMAL_MANA_RE)
 
 # Mana cost transform dict
 MANA_DICT = { NORMAL_MANA_RE: NORMAL_MANA, 
@@ -204,7 +204,7 @@ def write_card_list(cards, output_file):
             card.rarity, 
             '', # Sound
             '', # Script
-            card.text))
+            card.text).replace(u"Æ", u"Ae"))
     output_file.close()
 
 def parse_cards(src, set_name):
