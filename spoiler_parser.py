@@ -138,7 +138,10 @@ def parse_toughness(a):
     return toughness
 
 def parse_text(elem):
-    text = elem.find("input")["value"]
+    try:
+        text = elem.find("input")["value"]
+    except TypeError:
+        return u''
     return u' '.join(re.sub(r"\[[/]*mana\]", "", text).split())
 
 def parse_elem_text(tag, as_list=False):
